@@ -1,0 +1,1078 @@
+    \documentclass[11pt,a4paper]{article}
+
+    % ---------- Simple, self-contained formatting ----------
+    \usepackage[margin=2cm]{geometry}
+    \usepackage{graphicx}
+    \usepackage{tabularx}
+    \usepackage{booktabs}
+    \usepackage{array}
+    \usepackage{float}
+    \usepackage{xcolor}
+    \usepackage{amsmath}
+    \usepackage{amssymb}
+    \usepackage{enumitem}
+    \usepackage{microtype}
+    \usepackage{tikz}   % [Draft 1] schematic figures
+    \usetikzlibrary{arrows.meta,decorations.pathreplacing}
+
+    \usepackage[numbers,sort&compress]{natbib}
+
+    \usepackage[
+        colorlinks=true,
+        linkcolor=black,
+        citecolor=blue,
+        urlcolor=blue
+    ]{hyperref}
+
+    % ---------- [Draft 1] Change mark-up ----------
+    % Everything added or altered in Draft 1 is shown in green.
+    % For the final submission change \showchangestrue to \showchangesfalse:
+    % the text stays and only the green colouring is removed.
+    \newif\ifshowchanges
+    \showchangestrue
+    \definecolor{addgreen}{RGB}{0,135,60}
+    \ifshowchanges
+        \newcommand{\added}[1]{\textcolor{addgreen}{#1}}
+        \newenvironment{addedblock}{\color{addgreen}}{}
+        \newcommand{\addedfloat}{\color{addgreen}}  % floats do not inherit colour
+    \else
+        \newcommand{\added}[1]{#1}
+        \newenvironment{addedblock}{}{}
+        \newcommand{\addedfloat}{}
+    \fi
+    % [TBC] = data the group must supply or confirm before submission
+    \newcommand{\tbc}[1]{\added{\textbf{[TBC\if\relax\detokenize{#1}\relax\else: #1\fi]}}}
+    % References added in Draft 1 are also shown in green in the reference list
+    \makeatletter
+    \newcommand*{\addedrefs}[1]{\@for\@tempa:=#1\do{%
+        \expandafter\gdef\csname addedref@\@tempa\endcsname{}}}
+    \AtBeginDocument{\ifshowchanges
+        \let\draft@lbibitem\@lbibitem
+        \def\@lbibitem[#1]#2{\normalcolor\draft@lbibitem[#1]{#2}%
+            \@ifundefined{addedref@#2}{}{\color{addgreen}}\ignorespaces}%
+    \fi}
+    \makeatother
+    \addedrefs{campbell2004,astrom1997,hexcel2013,williams1996,twigg2004,explorecomposites_release,toray_t300,astm_d3171,krenchel1964,judd1978,centea2015,swolfs2014}
+    % Ragged-right table column for the new tables
+    \newcolumntype{L}{>{\raggedright\arraybackslash}X}
+
+
+
+    \begin{document}
+
+    % ======================================================
+    % COVER PAGE
+    % ======================================================
+    \begin{titlepage}
+        \centering
+        \vspace*{\fill}
+        \includegraphics[width=0.6\textwidth]{usyd_logo.png}\\[1em]
+        {\scshape\Large School of Aerospace, Mechanical and Mechatronic Engineering}\\[3em]
+        {\scshape\Large MECH2460/8660 Manufacturing Engineering}\\[1em]
+        \rule{\linewidth}{0.5mm}\\[0.4cm]
+        {\Huge\bfseries Polymer Composite Manufacturing Lab Report}\\[0.1cm]
+        \rule{\linewidth}{0.5mm}\\[3em]
+        {\large Canvas Group: 72}\\[0.5em]
+        {\large Laboratory date: 08/10/2026}\\[3em]
+
+        \renewcommand{\arraystretch}{1.5}
+
+\begin{tabularx}{\linewidth}{|l|l|X|}
+    \hline
+    Name & SID & Contribution \\ \hline
+    Abdullah Al Nuhian & 550232069 & Abstract, Introduction and Methodology \\ \hline
+     & & \\ \hline
+     & & \\ \hline
+     & & \\ \hline
+\end{tabularx}
+
+        \vspace*{\fill}
+    \end{titlepage}
+
+    \pagenumbering{arabic}
+
+
+    % =============================================
+    % Main Document
+    % =============================================
+
+    \section{Abstract}
+
+\begin{addedblock}
+This report describes the manufacture and characterisation of a
+fibre-reinforced polymer (FRP) aerofoil made by manual prepreg lay-up,
+vacuum bagging and oven curing. Each skin was laid up in an aluminium
+billet mould as a symmetric four-ply hybrid laminate, with woven
+carbon/epoxy on both faces and two woven E-glass/epoxy plies at the
+centre ($[\mathrm{C}/\mathrm{G}]_\mathrm{s}$), and the skins were
+bonded to a polyurethane foam core. The theoretical overview covers
+mould making (female and male moulds, process-specific requirements
+and material selection, mould manufacturing methods, gelcoats and
+release agents) and the role of each vacuum-bagging consumable. From
+the measured skin thickness of \tbc{}\,mm and the nominal fabric areal
+masses and fibre densities, the fibre volume fraction was estimated as
+\tbc{}\,\%, against about 49\,\% expected for a void-free laminate; the
+mould-side surfaces \tbc{one-line summary of surface quality}. The
+discussion compares common FRP manufacturing processes and examines
+how fibre type, volume fraction, orientation, stacking sequence, voids
+and cure conditions govern laminate properties, showing that placing
+the carbon plies outermost roughly doubles the flexural rigidity of
+the skin. Small UAV wing skins are proposed as a suitable application
+for hand lay-up.
+\end{addedblock}
+
+
+
+\section{Introduction}
+
+\subsection{Fibre-Reinforced Polymer Composites}
+
+Fibre-reinforced polymer (FRP) composites are multiphase engineering
+materials comprising reinforcing fibres embedded within a continuous
+polymer matrix. The fibres provide most of the load-bearing strength
+and stiffness, while the matrix maintains fibre alignment, transfers
+inter-fibre stresses and protects the reinforcement from environmental
+damage \citep{mallick2007}. The resulting mechanical properties are
+generally anisotropic, meaning they depend on loading direction.
+Through appropriate selection of fibre type, orientation, volume
+fraction and stacking sequence, FRP laminates can be tailored to
+specific structural requirements.
+
+A major advantage of FRPs is their high specific strength and
+stiffness, enabling substantial weight savings in applications where
+structural efficiency is critical. Unlike metals, which generally
+exhibit ductile behaviour, or ceramics, which offer high hardness and
+thermal resistance but are typically brittle, FRPs provide
+directionally optimised mechanical performance and often excellent
+corrosion resistance. However, limitations include relatively low
+through-thickness strength, susceptibility to delamination and
+temperature restrictions imposed by the polymer matrix
+\citep{mallick2007}. Table~\ref{tab:material_comparison} summarises
+the principal engineering differences between these material classes.
+
+\begin{table}[htbp]
+    \centering
+    \caption{Qualitative comparison of FRP composites with
+    conventional engineering materials \citep{mallick2007}.}
+    \label{tab:material_comparison}
+    \small
+    \renewcommand{\arraystretch}{1.15}
+    \begin{tabularx}{\linewidth}{@{}p{2.5cm}XXX@{}}
+        \toprule
+        \textbf{Property} &
+        \textbf{FRP Composites} &
+        \textbf{Metals} &
+        \textbf{Ceramics} \\
+        \midrule
+        Specific strength
+        and stiffness &
+        Often high; direction-dependent &
+        Moderate to high &
+        Material-dependent \\
+
+        Mechanical
+        behaviour &
+        Anisotropic; may delaminate &
+        Generally ductile &
+        Hard but brittle \\
+
+        Corrosion
+        resistance &
+        Often good &
+        Alloy-dependent &
+        Generally good \\
+
+        Temperature
+        resistance &
+        Limited by matrix &
+        Alloy-dependent &
+        Often excellent \\
+
+        Manufacturing &
+        Lay-up, consolidation and curing &
+        Casting, forming and machining &
+        Forming, sintering and finishing \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+These characteristics have established FRPs in aerospace, automotive,
+marine and renewable-energy applications, where lightweight
+construction and tailored structural performance are particularly
+valuable \citep{wu2026}.
+
+\subsection{Fibre Architectures and Matrix Materials}
+
+Common reinforcing fibres include carbon, glass and aramid. Carbon
+fibres offer high specific stiffness and strength, making them
+suitable for lightweight structural components. Glass fibres
+provide a cost-effective combination of strength, durability and
+electrical insulation, while aramid fibres exhibit high toughness
+and impact resistance \citep{mallick2007}.
+
+Fibre architecture also strongly influences composite performance.
+Unidirectional (UD) reinforcement concentrates strength and
+stiffness along the fibre direction, whereas woven fabrics provide
+reinforcement along multiple yarn directions. Plain-weave fabrics
+have frequent interlacements, improving fabric stability, while
+twill weaves generally offer better drapability over curved
+surfaces due to reduced interlacement frequency.
+\added{Satin weaves (e.g.\ 4- or 8-harness) have even fewer
+interlacements, giving the best drape and lowest crimp, while
+non-woven forms such as stitched non-crimp fabrics and randomly
+oriented chopped-strand mat are chosen for straight, uncrimped fibres
+and for low cost, respectively \citep{mallick2007,campbell2004}.} The selection
+of architecture therefore involves balancing mechanical
+requirements with manufacturing considerations.
+
+Polymer matrices are broadly classified as thermosetting and
+thermoplastic. Common thermosets include epoxy, polyester\added{, vinyl
+ester} and phenolic resins, which form cross-linked networks during curing.
+Thermoplastics, in contrast, soften upon heating and can be
+reshaped\added{; common examples are polypropylene, polyamides and,
+for high-temperature aerospace use, polyether ether ketone (PEEK)}. Epoxy-based prepregs contain fibres pre-impregnated
+with a controlled resin quantity, improving material consistency
+and eliminating separate resin application during lay-up.
+Successful processing requires appropriate consolidation and
+thermal curing to achieve the intended laminate properties
+\citep{mallick2007,wu2026}.
+
+
+\subsection{Laboratory Objectives}
+
+This laboratory investigated the manufacture of a fibre-reinforced
+polymer composite aerofoil using carbon- and glass-fibre prepregs
+with a polyurethane foam core. The experiment involved manual
+prepreg lay-up, vacuum bagging and thermal curing using an
+aluminium mould \citep{chang2026}. The primary objectives were to:
+
+\begin{itemize}[leftmargin=1.5em, itemsep=2pt, topsep=3pt]
+    \item Understand the key stages of prepreg composite
+    manufacturing, including material preparation, fibre
+    lay-up, vacuum consolidation and curing.
+
+    \item Examine the effects of fibre type, orientation,
+    stacking sequence and processing conditions on
+    composite quality and structural performance.
+
+    \item Characterise the manufactured aerofoil through
+    dimensional measurements, laminate architecture,
+    fibre volume fraction estimation and surface inspection.
+
+    \item Evaluate the advantages, limitations and
+    engineering applications of manual composite lay-up
+    relative to alternative manufacturing techniques.
+\end{itemize}
+
+
+
+
+    \section{Brief Theoretical Overview}
+    % [Draft 1] The placeholder question list below is answered in
+    % Section 3.1 and is kept here, commented out, for reference.
+    % \begin{itemize}
+    %     \item In the lab a simple aluminium billet mould was used. Outline the practical process of making a simple
+    % mould of this type. In your report, please discuss the following points (this may need some research as
+    % it contains content outside of the laboratory and is included to develop students’ self-guided research
+    % skills):
+    %     \begin{itemize}
+    %         \item Female vs Male moulds
+    %         \item  Differences in mould requirements for different composite-manufacturing techniques (i.e., wet-hand layup, vacuum infusion and prepreg (highlighting mould material selection)
+    %         \item Common manufacturing methods for composite moulds.
+    %         \item Use of gelcoats and other mould-surfacing chemicals and their purposes
+    %     \end{itemize}
+    % \end{itemize}
+
+\begin{addedblock}
+\subsection{Mould Design and Manufacture}
+\label{sec:moulds}
+
+\paragraph{Making a simple aluminium billet mould.}
+A billet mould like the one used in the laboratory is machined from a
+solid block of aluminium alloy \citep{campbell2004}. (i)~\emph{Design:}
+the tool surface is modelled in CAD from the required outer surface of
+the part, with a flat margin for trimming, sealant tape and bagging,
+draft on near-vertical walls, and, for precision parts, an allowance
+for thermal expansion at the cure temperature. (ii)~\emph{Stock
+preparation:} a plate or billet (e.g.\ 6061-T6 or stress-relieved cast
+tooling plate) is cut oversize and faced flat. (iii)~\emph{CNC
+machining:} the cavity is roughed out with flat end mills and finished
+with ball-nose cutters at a small step-over. (iv)~\emph{Finishing:}
+the cusps are removed by wet sanding with progressively finer
+abrasives and the surface is polished, since every tool defect is
+reproduced on the part. (v)~\emph{Inspection and preparation:} the
+profile is checked against the CAD model, and the surface is degreased,
+sealed and given several cured coats of release agent.
+
+\paragraph{Female versus male moulds.}
+In a female (concave) mould the plies are laid inside a cavity, so the
+mould-side face becomes the outer surface of the part and the external
+dimensions are tightly controlled (Figure~\ref{fig:female_male}a).
+This suits parts whose exterior is aerodynamically or cosmetically
+critical, such as aerofoil skins, boat hulls and body panels, but
+fabric can bridge across tight internal radii, leaving resin-rich or
+poorly consolidated corners. In a male (convex) mould the plies are
+laid over the tool, which controls the inner surface and dimensions
+(Figure~\ref{fig:female_male}b), as needed for ducts or fairings that
+fit over other structure. Lay-up is easier, but the outer face is the
+rough bag side, which must be filled and finished if appearance
+matters, and cure shrinkage makes the part grip the tool, so generous
+draft is needed \citep{campbell2004,astrom1997}.
+\end{addedblock}
+
+\begin{figure}[htbp]
+    \addedfloat
+    \centering
+    \begin{tikzpicture}[font=\footnotesize, >=Stealth, black]
+        % ---- (a) female mould ----
+        \fill[gray!30] (0,0) -- (6,0) -- (6,1.7) -- (5,1.7)
+            arc[start angle=0, end angle=-180, x radius=2, y radius=1.1]
+            -- (0,1.7) -- cycle;
+        \draw[gray!60!black] (0,0) -- (6,0) -- (6,1.7) -- (5,1.7)
+            arc[start angle=0, end angle=-180, x radius=2, y radius=1.1]
+            -- (0,1.7) -- cycle;
+        \draw[line width=2.4pt, black!85] (1.08,1.7)
+            arc[start angle=180, end angle=360, x radius=1.92, y radius=1.02];
+        \node at (3,0.22) {aluminium mould};
+        \draw[->] (0.9,2.1) node[above, align=center] {bag side\\(rough)} -- (2.05,0.93);
+        \draw[->] (5.0,2.1) node[above, align=center] {mould side\\(smooth outer\\surface)} -- (4.02,0.76);
+        \node[below] at (3,-0.1) {(a) Female (concave) mould};
+        % ---- (b) male mould ----
+        \begin{scope}[xshift=7.6cm]
+            \fill[gray!30] (0,0) -- (6,0) -- (6,0.6) -- (5,0.6)
+                arc[start angle=0, end angle=180, x radius=2, y radius=1.1]
+                -- (0,0.6) -- cycle;
+            \draw[gray!60!black] (0,0) -- (6,0) -- (6,0.6) -- (5,0.6)
+                arc[start angle=0, end angle=180, x radius=2, y radius=1.1]
+                -- (0,0.6) -- cycle;
+            \draw[line width=2.4pt, black!85] (5.08,0.6)
+                arc[start angle=0, end angle=180, x radius=2.08, y radius=1.18];
+            \node at (3,0.25) {aluminium mould};
+            \draw[->] (0.9,2.1) node[above, align=center] {mould side\\(smooth inner\\surface)} -- (1.47,1.32);
+            \draw[->] (5.1,2.1) node[above, align=center] {bag side\\(rough)} -- (4.45,1.6);
+            \node[below] at (3,-0.1) {(b) Male (convex) mould};
+        \end{scope}
+    \end{tikzpicture}
+    \caption{Schematic of a laminate (thick line) in (a) a female and
+    (b) a male mould. The mould-side face of the part reproduces the
+    tool finish.}
+    \label{fig:female_male}
+\end{figure}
+
+\begin{addedblock}
+\paragraph{Mould requirements for different processes.}
+Table~\ref{tab:mould_req} compares the mould requirements of three
+processes. Because wet hand lay-up cures near room temperature under
+contact pressure only, inexpensive moulds of glass-fibre reinforced
+plastic (GFRP), timber, MDF or plaster suffice. Vacuum infusion also
+needs a vacuum-tight, stiff tool with a wide flange for sealant tape
+and the resin and vacuum lines \citep{williams1996}. Prepreg moulds
+must keep their shape and vacuum integrity through cures at typically
+80--180\,$^\circ$C and, in an autoclave, up to about 7\,bar
+\citep{campbell2004,hexcel2013}. Material selection for prepreg
+tooling is driven by thermal expansion, thermal mass and cost.
+Aluminium is light, cheap to machine and heats quickly, but its
+coefficient of thermal expansion ($\alpha \approx
+23\times10^{-6}$\,K$^{-1}$) far exceeds that of carbon/epoxy ($\alpha
+\approx 2$--$3\times10^{-6}$\,K$^{-1}$). Heated by 100\,K to a typical
+120\,$^\circ$C cure, an aluminium tool grows by about 0.23\,mm per
+100\,mm, almost ten times more than the laminate, causing dimensional
+error and tool--part interaction stresses that can distort thin parts
+\citep{twigg2004}. Steel ($\alpha \approx 12\times10^{-6}$\,K$^{-1}$)
+is durable but heavy, while Invar ($\alpha \approx
+1.5\times10^{-6}$\,K$^{-1}$) and carbon/epoxy tooling closely match
+carbon parts and are preferred for large, tight-tolerance aerospace
+parts despite their cost \citep{campbell2004}. For a small aerofoil
+like this one, aluminium offers the best balance of cost,
+machinability and heat-up rate.
+\end{addedblock}
+
+\begin{table}[htbp]
+    \addedfloat
+    \centering
+    \caption{Typical mould requirements for three composite
+    manufacturing techniques \citep{campbell2004,astrom1997,williams1996,hexcel2013}.}
+    \label{tab:mould_req}
+    \footnotesize
+    \renewcommand{\arraystretch}{1.15}
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.2cm}LLL@{}}
+        \toprule
+        & \textbf{Wet hand lay-up} & \textbf{Vacuum infusion}
+        & \textbf{Prepreg (vacuum bag/oven or autoclave)} \\
+        \midrule
+        Cure temperature & Ambient (optional low-temperature post-cure)
+            & Ambient to moderate & Typically 80--180\,$^\circ$C \\
+        Pressure & Contact only (brush and roller)
+            & Vacuum, at most $\approx$1\,atm
+            & Vacuum; up to $\approx$7\,bar in an autoclave \\
+        Key requirements & Smooth, sealed, releasable surface; low cost
+            & Vacuum-tight and non-porous; stiff under vacuum; wide flange
+            for sealant tape, resin inlet and vacuum line
+            & Stable shape and vacuum integrity at cure temperature; CTE
+            close to the part; low thermal mass; survives many thermal
+            cycles \\
+        Typical materials & GFRP with tooling gelcoat; timber, MDF,
+            plaster or foam for one-offs & GFRP or epoxy composite,
+            aluminium, glass or sheet steel & Aluminium, steel, Invar;
+            carbon/epoxy or BMI tooling; high-temperature tooling board \\
+        Surface preparation & Wax and/or PVA, or semi-permanent release;
+            part gelcoat sprayed in mould & Semi-permanent release;
+            gelcoat optional & Temperature-stable semi-permanent release;
+            no gelcoat \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\begin{addedblock}
+\paragraph{Common mould manufacturing methods.}
+(1)~Direct CNC machining of metal billet or plate (aluminium, steel,
+Invar), as used here, gives accurate, durable, high-temperature tools
+but becomes costly for large parts. (2)~Composite (splash) moulds are
+taken from a master pattern, or plug, that is CNC-machined from
+tooling board, MDF or foam (or 3D printed), then sealed and polished;
+tooling gelcoat and a GFRP or CFRP tooling laminate are laid over the
+plug and stiffened with a backing frame. This is the usual route for
+large tools such as boat hulls and wind-turbine blades. (3)~Direct
+machining of high-density polyurethane or epoxy tooling board suits
+prototypes and short runs. (4)~Other routes include cast resin or cast
+metal tools, electroformed nickel shells for very high surface quality
+and additively manufactured moulds for rapid prototyping
+\citep{campbell2004,astrom1997}.
+
+\paragraph{Gelcoats and mould-surfacing chemicals.}
+A gelcoat is a thixotropic, usually pigmented polyester, vinyl ester
+or epoxy resin applied to the mould as the first layer (typically
+about 0.5\,mm thick). It becomes the outer surface of the part,
+providing colour and gloss, hiding fibre print-through and protecting
+the laminate from UV, moisture and abrasion; tooling gelcoats are
+harder, more heat-resistant grades that form the working surface of
+composite moulds \citep{astrom1997}. Mould sealers fill the
+microporosity of new or porous tool surfaces so that the release agent
+forms a continuous film and resin cannot key into the tool. Release
+agents then prevent adhesion: traditional carnauba waxes (several
+buffed coats) and water-soluble polyvinyl alcohol (PVA) films, or
+semi-permanent release agents that bond to the mould, tolerate high
+cure temperatures and give several releases per application. Mould
+cleaners remove resin residue and release-agent build-up between uses
+\citep{explorecomposites_release}. In this laboratory only a liquid
+release agent was wiped onto the bare aluminium moulds
+(Section~\ref{sec:procedure}), as gelcoats are generally not used with
+prepregs.
+
+\subsection{Consumables}
+\label{sec:consumables}
+\end{addedblock}
+
+
+The required consumables for composite manufacturing \added{vary} between processes. The consumables and their functions for the pre-preg layup performed in the laboratory are as follows:\\
+
+\textbf{\added{Mould} Release Agent} is a coating applied to the \added{mould} to prevent the part from bonding to the \added{mould}. This ensures that \added{both} the part and \added{mould} are not damaged during the \added{demoulding} process.\\
+
+A \textbf{Breather} is a layer of fabric that is placed on top of the layup and within the vacuum sealed bag. Its primary function is to provide a path for air to travel. Without it, the vacuum bag would suck itself flat to the part, resulting in pockets of air without direct exit paths. The breather creates a distributed pathway from all parts of the bag to ensure that all air is able to escape, producing a proper and effective vacuum.\\
+
+\textbf{Peel Ply} is another layer of fabric that is laid atop and used to protect the outermost layer of a layup. It prevents the laminate from contamination by dust, oils, and other substances during handling, ensuring that the surface finish of the part is optimal. It also separates the part from the breather and bagging material, so that they can be easily removed. \added{When it is stripped after curing it leaves a clean, uniformly textured surface that is ideal for adhesive bonding; this mattered here because the bag-side surfaces of the skins were later bonded to the foam core \citep{campbell2004}.}\\
+
+A \textbf{Vacuum Bag} is a flexible, airtight film bag. It surrounds and encloses the entire layup so that once air has been fully removed, atmospheric pressure \added{(up to about 101\,kPa)} compresses the layers, ensuring there are no voids/pockets and that the part is held together during the curing phase.\\
+
+\textbf{Tacky Tape} is a sealant tape that is lined across the perimeter of the vacuum bag. The bag is pressed onto the tape to create the airtight seal necessary to create a vacuum.
+
+\begin{addedblock}
+\vspace{\baselineskip}
+\textbf{Vacuum Port, Valve and Hose} connect the bag to the vacuum
+pump, with a strip of breather keeping an open air path to the port.
+More demanding prepreg lay-ups also use release film between the peel
+ply and breather to control resin bleed, bleeder cloth to absorb excess
+resin, heat-resistant flash tape, and thermocouples to monitor the part
+temperature \citep{hexcel2013,campbell2004}. Figure~\ref{fig:bagging}
+shows the complete arrangement.
+\end{addedblock}
+
+\begin{figure}[htbp]
+    \addedfloat
+    \centering
+    \begin{tikzpicture}[font=\footnotesize, >=Stealth, black]
+        % atmospheric pressure
+        \foreach \x in {2.6,3.6,...,7.6} \draw[->, thick, gray!70!black] (\x,2.5) -- (\x,2.0);
+        \node[above] at (5.1,2.5) {atmospheric pressure (up to $\approx$101\,kPa)};
+        % bottom bag film
+        \draw[blue!70!black, very thick] (0,0) -- (11.4,0);
+        % mould
+        \fill[gray!30] (1.4,0.05) rectangle (8.4,0.85);
+        \draw[gray!60!black] (1.4,0.05) rectangle (8.4,0.85);
+        \node at (5.1,0.42) {aluminium mould};
+        % release agent
+        \draw[orange!90!black, thick, dashed] (1.9,0.88) -- (7.9,0.88);
+        % plies C/G/G/C
+        \filldraw[fill=black!80, draw=black] (2.2,0.92) rectangle (7.6,1.04);
+        \filldraw[fill=yellow!25, draw=black!60] (2.2,1.04) rectangle (7.6,1.16);
+        \filldraw[fill=yellow!25, draw=black!60] (2.2,1.16) rectangle (7.6,1.28);
+        \filldraw[fill=black!80, draw=black] (2.2,1.28) rectangle (7.6,1.40);
+        % peel ply
+        \filldraw[fill=orange!45, draw=orange!70!black] (2.1,1.43) rectangle (7.7,1.50);
+        % breather, draped over the mould and led to the port
+        \draw[line width=5pt, gray!45] (1.2,0.09) -- (1.2,1.63) -- (8.6,1.63) -- (8.6,0.09) -- (10.0,0.09);
+        % top bag film
+        \draw[blue!70!black, very thick, rounded corners=3pt] (0.35,0.14) -- (0.95,1.85) -- (8.85,1.85) -- (9.0,0.32) -- (10.95,0.32) -- (11.05,0.14);
+        % tacky tape
+        \filldraw[fill=yellow!70!orange, draw=black!60] (0.2,0.0) rectangle (0.5,0.14);
+        \filldraw[fill=yellow!70!orange, draw=black!60] (10.9,0.0) rectangle (11.2,0.14);
+        % vacuum port and hose
+        \filldraw[fill=gray!70, draw=black] (9.25,0.19) rectangle (9.95,0.29);
+        \filldraw[fill=gray!70, draw=black] (9.45,0.32) rectangle (9.75,0.75);
+        \draw[line width=2pt, gray!60!black] (9.6,0.75) .. controls (9.6,1.2) and (10.0,1.25) .. (10.6,1.25);
+        \node[right] at (10.6,1.25) {to pump};
+        % labels
+        \draw (2.15,1.47) -- (-0.4,1.95) node[left] {peel ply};
+        \draw (2.25,1.16) -- (-0.4,1.45) node[left] {prepreg plies (C/G/G/C)};
+        \draw (1.95,0.88) -- (-0.4,0.95) node[left] {release agent};
+        \draw (0.3,0.07) -- (-0.4,0.4) node[left] {tacky tape};
+        \draw (8.3,1.85) -- (9.3,2.3) node[right] {vacuum bag};
+        \draw (8.6,1.2) -- (9.3,1.9) node[right] {breather};
+        \draw (9.6,0.19) -- (9.6,-0.25) node[below] {vacuum port};
+    \end{tikzpicture}
+    \caption{Cross-section (not to scale) of the vacuum-bag arrangement
+    used for each mould: the four prepreg plies on the release-coated
+    aluminium mould are covered by peel ply and breather inside an
+    envelope bag sealed with tacky tape and evacuated through the
+    vacuum port.}
+    \label{fig:bagging}
+\end{figure}
+
+
+
+
+
+\section{Lab Procedure}
+\label{sec:procedure}
+
+\textbf{Setup} - The following equipment was utilised to carry out the lab procedure: Disposable gloves, ruler, utility knife, female and male mould, pre-preg carbon fibre, pre-preg fibre glass, the consumables covered in section 3, and the vacuum port and line.\\
+
+The procedure carried out in the lab is as follows:\\
+
+\textbf{1} - Measure the \added{mould} dimensions using a ruler. Based on this measurement, cut the pre-preg carbon-fibre and fibre-glass to a suitable length and width, ensuring the cut covers the entire \added{mould}. There should be a total of four cuts \tbc{per mould?}, two carbon-fibre, and two fibre-glass.\\
+
+\textbf{2} - Apply the releasing agent to the \added{mould}. Only a thin layer is necessary, however, ensure that it is evenly distributed without bare spots. This can be achieved by wiping it across the \added{mould} using a cloth.\\
+
+\textbf{3} - Lay the carbon-fibre and fibre-glass onto the mould layer by layer. Ensure that each layer is pressed flat against the \added{mould} or layer beneath it, minimising the volume of air between layers. The order of the layers should create a symmetrical order about the mid-plane to ensure uniform properties once the part is cured \added{and to stop the laminate warping as it cools from the cure temperature}. This is achieved by laying \added{the} two carbon-fibre cuts on the top and bottom, sandwiching the two fibre-glass layers. The final result is a 4-ply composite.\\
+
+\textbf{4} - Cut a layer of peel ply to the same dimensions as the fibre layups. Place this on top of the topmost layer, once again pressing it flat and minimising any trapped air.\\
+
+\textbf{5} - With the main layup finished, place the \added{moulds} side by side on top of a vacuum bag. Apply tacky tape to the vacuum bag, creating a perimeter around the \added{moulds}.\\
+
+\textbf{\added{6}} - Cut a single layer of breather fabric large enough to cover both \added{moulds}. Place the breather on top of the layup.\\
+
+\textbf{\added{7}} - Seal the vacuum bag by pulling it back over the \added{moulds}. Gradually peel the backing paper of the tacky tape ensuring that the vacuum bag does not wrinkle when pressing it onto the tape, preventing small channels from emerging. Before finalising the seal, leave one edge of the bag open.\\
+
+\textbf{\added{8}} - Place the vacuum port at a distance between the \added{mould} and \added{bag's} edge. The base should sit inside the bag, and screw the top outside the bag, cutting a small slit to allow air to escape. To ensure air has an undisturbed pathway to exit via the port, cut a strip of breather fabric that leads from the primary breather layer to the vacuum port.\\
+
+\textbf{\added{9}} - Seal the final edge of the vacuum bag. To test the quality of the vacuum, attach the hose to the port and begin the air evacuation process. If there is a noticeable hissing sound, it is highly likely that air is escaping from \added{an} unsealed hole around the vacuum bag perimeter.\\
+
+\textbf{\added{10}} - Once the seal quality is verified, the entire assembly is transferred into the curing oven. The vacuum hose line is connected to a port within the oven. The program should be set for optimum curing cycle \added{recommended by the prepreg manufacturer} \tbc{state the cure cycle used: heating rate, cure temperature and hold time}. The oven is then started and fan turned on for uniform heating.\\
+
+\textbf{\added{11}} - Once the curing cycle has been completed and the part has cooled sufficiently, it can be removed from the oven. Once the vacuum is vented, the bag can be cut open and the \added{moulds} removed from within. Consumables (\added{e.g.\ breather}, peel ply) can be removed. The part should snap out of the \added{mould} with little problem due to the use of the release agent.\\
+
+\textbf{\added{12}} -  The result should be two fibre-reinforced composite parts that make up the upper and lower surface of an \added{aerofoil}. These parts are then placed on the outer surface of a foam core with the intended \added{aerofoil} profile and bonded using a suitable adhesive \tbc{name the adhesive used}.
+
+
+
+\section{Results}
+% [Draft 2] Results restructured into Sections 5.1--5.6. No measurements
+% were taken in the laboratory, so the part is described qualitatively
+% and its composition is estimated from nominal material data.
+
+\begin{addedblock}
+\subsection{Manufactured Composite Aerofoil}
+
+The finished part (Figure~\ref{fig:part}) is a composite aerofoil
+section made of two cured hybrid carbon/glass skins, forming the upper
+and lower aerodynamic surfaces, bonded to a polyurethane (PU) foam
+core. No dimensional or mass measurements were taken during the
+laboratory, so the part is described qualitatively here and its
+composition is estimated from nominal material data in
+Section~\ref{sec:composition}. Its geometry is set by the tooling: the
+aluminium moulds define the outer aerofoil surface, the foam core
+defines the internal profile, and the skin thickness is set by the
+four prepreg plies and the degree of consolidation achieved under
+vacuum.
+\end{addedblock}
+
+\begin{figure}[htbp]
+    \addedfloat
+    \centering
+    \begin{minipage}[c]{0.34\linewidth}
+        \centering
+        \fbox{\parbox[c][3.4cm][c]{0.92\linewidth}{\centering
+            \tbc{insert photograph of the finished aerofoil, if
+            available}}}\\[2pt]
+        {\footnotesize (a)}
+    \end{minipage}\hfill
+    \begin{minipage}[c]{0.64\linewidth}
+        \centering
+        \begin{tikzpicture}[font=\footnotesize, >=Stealth, black,
+            declare function={xc(\t)=(1-cos(\t))/2;
+                yt(\x)=5*0.15*(0.2969*sqrt(\x)-0.1260*\x-0.3516*\x^2+0.2843*\x^3-0.1015*\x^4);}]
+            \def\c{5.6}
+            % foam core and skins (symmetric 15 % section, schematic only)
+            \fill[yellow!25] plot[domain=0:180, samples=70, variable=\t]
+                ({\c*xc(\t)}, {\c*yt(xc(\t))}) --
+                plot[domain=180:0, samples=70, variable=\t]
+                ({\c*xc(\t)}, {-\c*yt(xc(\t))}) -- cycle;
+            \draw[line width=1.6pt, black!85] plot[domain=0:180, samples=70, variable=\t]
+                ({\c*xc(\t)}, {\c*yt(xc(\t))});
+            \draw[line width=1.6pt, black!60] plot[domain=0:180, samples=70, variable=\t]
+                ({\c*xc(\t)}, {-\c*yt(xc(\t))});
+            \node at (2.2,0) {PU foam core};
+            \draw[->] (1.0,1.0) node[above] {upper skin} -- (1.0,0.47);
+            \draw[->] (1.0,-1.0) node[below] {lower skin} -- (1.0,-0.47);
+            \draw[<->] (0,-1.45) -- node[below] {chord $c$} (\c,-1.45);
+            % ply stack detail
+            \draw[dashed, gray] (3.0,0.43) -- (5.9,0.75);
+            \begin{scope}[shift={(5.9,0.0)}]
+                \filldraw[fill=black!80, draw=black] (0,0.9) rectangle (0.9,1.2);
+                \filldraw[fill=yellow!25, draw=black!60] (0,0.6) rectangle (0.9,0.9);
+                \filldraw[fill=yellow!25, draw=black!60] (0,0.3) rectangle (0.9,0.6);
+                \filldraw[fill=black!80, draw=black] (0,0.0) rectangle (0.9,0.3);
+                \node[right, font=\scriptsize] at (0.9,1.05) {4 carbon (bag side)};
+                \node[right, font=\scriptsize] at (0.9,0.75) {3 E-glass};
+                \node[right, font=\scriptsize] at (0.9,0.45) {2 E-glass};
+                \node[right, font=\scriptsize] at (0.9,0.15) {1 carbon (mould side)};
+                \draw[decorate, decoration={brace, amplitude=3pt}] (-0.08,0) -- node[left=3pt] {$h$} (-0.08,1.2);
+            \end{scope}
+        \end{tikzpicture}\\[2pt]
+        {\footnotesize (b)}
+    \end{minipage}
+    \caption{(a) The manufactured aerofoil. (b) Schematic section (not
+    to scale) showing the two skins bonded to the foam core and the
+    $[\mathrm{C}/\mathrm{G}]_\mathrm{s}$ ply sequence of each skin.}
+    \label{fig:part}
+\end{figure}
+
+\begin{addedblock}
+\subsection{Laminate Architecture}
+
+Each skin is a four-ply, symmetric, inter-ply hybrid laminate
+(Figure~\ref{fig:part}b, Table~\ref{tab:architecture}). Ply~1, laid
+against the mould and forming the aerodynamic surface, and ply~4, on
+the bag side, are woven carbon/epoxy prepreg; plies 2 and 3 at the
+mid-plane are woven E-glass/epoxy prepreg. With the warp of every
+fabric aligned with the span, the stacking sequence is
+$[0_\mathrm{C}/0_\mathrm{G}]_\mathrm{s}$, where each 0 denotes a
+0/90$^\circ$ woven ply \tbc{confirm ply angles, fabric styles and
+prepreg products}. The two skins together contain eight plies, four
+carbon and four glass \tbc{confirm four plies per skin}. The lay-up
+is symmetric and balanced, so neither bending--extension nor
+extension--shear coupling is expected.
+\end{addedblock}
+
+\begin{table}[htbp]
+    \addedfloat
+    \centering
+    \caption{Laminate architecture of each skin ($A_w$ = fabric areal
+    mass, $\rho_f$ = fibre density, $W_r$ = prepreg resin content by
+    mass). $^*$Nominal values typical of woven epoxy prepregs
+    \tbc{replace with data-sheet values if known}.}
+    \label{tab:architecture}
+    \small
+    \renewcommand{\arraystretch}{1.1}
+    \begin{tabular}{@{}cllcccc@{}}
+        \toprule
+        \textbf{Ply} & \textbf{Position} & \textbf{Prepreg / weave}
+        & \textbf{Angle} & $A_w$ (g\,m$^{-2}$) & $\rho_f$ (g\,cm$^{-3}$)
+        & $W_r$ (wt\%) \\
+        \midrule
+        1 & Mould side & Carbon/epoxy, \tbc{weave} & 0/90 & 200$^*$ & 1.76 & 40$^*$ \\
+        2 & Mid-plane & E-glass/epoxy, \tbc{weave} & 0/90 & 200$^*$ & 2.54 & 35$^*$ \\
+        3 & Mid-plane & E-glass/epoxy & 0/90 & 200$^*$ & 2.54 & 35$^*$ \\
+        4 & Bag side & Carbon/epoxy & 0/90 & 200$^*$ & 1.76 & 40$^*$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{addedblock}
+\subsection{Material Composition}
+\label{sec:composition}
+
+The fibre densities are 1.76\,g\,cm$^{-3}$ for the T300-type carbon
+\citep{toray_t300} and 2.54\,g\,cm$^{-3}$ for E-glass
+\citep{mallick2007}, and the cured epoxy matrix is about
+1.2\,g\,cm$^{-3}$ \citep{mallick2007}. With equal nominal areal masses
+of 200\,g\,m$^{-2}$, carbon and glass each make up half of the plies
+and half of the fibre mass, but because carbon is about 30\,\% less
+dense it makes up about 59\,\% of the fibre volume (glass 41\,\%).
+
+Since the cured skins were not measured, their composition was
+estimated theoretically. For a void-free laminate with no resin bleed,
+the cured thickness of each ply follows from its areal mass and
+prepreg resin content:
+\begin{equation}
+    t_{\mathrm{ply},i} = \frac{A_{w,i}}{\rho_{f,i}}
+    + \frac{A_{w,i}}{\rho_m}\,\frac{W_{r,i}}{1-W_{r,i}},
+    \label{eq:cpt}
+\end{equation}
+where the first term is the thickness of solid fibre and the second
+that of resin. The fibre volume fraction of the laminate is then
+\begin{equation}
+    V_f = \frac{1}{h}\sum_i \frac{n_i A_{w,i}}{\rho_{f,i}},
+    \label{eq:vf}
+\end{equation}
+where $n_i$ is the number of plies of fabric $i$ and $h$ the laminate
+thickness \citep{astm_d3171}. The results (Table~\ref{tab:vf}) give a
+skin thickness of 0.786\,mm and $V_f \approx 49$\,\%, made up of
+28.9\,\% carbon and 20.0\,\% glass fibre, with 51.1\,\% matrix by
+volume. These are ideal values: in the real skins, resin bleed into the
+peel ply and breather would raise $V_f$, while voids and incomplete
+consolidation under vacuum alone would lower it. Because the summed
+fibre thickness is 0.385\,mm, Eq.~(\ref{eq:vf}) reduces to
+$V_f = 0.385/h$ ($h$ in mm), so a single thickness measurement would
+be enough to check the estimate.
+\end{addedblock}
+
+\begin{table}[htbp]
+    \addedfloat
+    \centering
+    \caption{Theoretical (void-free, no resin bleed) composition of
+    each skin, from Eqs.~(\ref{eq:cpt}) and (\ref{eq:vf}) with the
+    nominal values in Table~\ref{tab:architecture}.}
+    \label{tab:vf}
+    \small
+    \renewcommand{\arraystretch}{1.1}
+    \begin{tabular}{@{}lccccc@{}}
+        \toprule
+        & \textbf{Thickness} & $\boldsymbol{V_f}$ & \textbf{Fibre mass} & \textbf{Density}
+        & \textbf{Areal mass} \\
+        & (mm) & (\%) & \textbf{fraction} (\%) & (g\,cm$^{-3}$) & (g\,m$^{-2}$) \\
+        \midrule
+        Carbon/epoxy ply & 0.225 & 50.6 & 60.0 & 1.48 & 333 \\
+        E-glass/epoxy ply & 0.168 & 46.7 & 65.0 & 1.83 & 308 \\
+        Skin $[\mathrm{C}/\mathrm{G}]_\mathrm{s}$ & 0.786 & 48.9 & 62.4 & 1.63 & 1282 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{addedblock}
+\subsection{Surface Quality and Manufacturing Defects}
+
+The skins were inspected visually after demoulding \tbc{confirm}. The
+mould-side (aerodynamic) surfaces were \tbc{e.g.\ smooth and glossy,
+reproducing the aluminium finish, with the carbon weave clearly
+visible}. The bag-side surfaces carried the uniform matte texture
+imprinted by the peel ply, which gives a clean, keyed surface for
+bonding to the core. Table~\ref{tab:defects} lists the defects
+looked for and their probable causes, which are discussed in
+Section~\ref{sec:quality}.
+\end{addedblock}
+
+\begin{table}[htbp]
+    \addedfloat
+    \centering
+    \caption{Manufacturing defects on the skins \tbc{fill in the
+    second column from visual inspection or photographs; write ``none
+    observed'' where applicable}.}
+    \label{tab:defects}
+    \footnotesize
+    \renewcommand{\arraystretch}{1.12}
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{4.0cm}>{\raggedright\arraybackslash}p{4.0cm}L@{}}
+        \toprule
+        \textbf{Defect} & \textbf{Observed (location)} & \textbf{Probable cause} \\
+        \midrule
+        Pinholes / porosity & \tbc{} & Trapped air; vacuum-only consolidation \\
+        Dry or resin-starved areas & \tbc{} & Excess resin bleed into peel ply and breather \\
+        Resin-rich areas & \tbc{} & Resin flow into concave regions or trailing edge \\
+        Wrinkles or ply bridging & \tbc{} & Fabric forced around leading-edge curvature \\
+        Fibre misalignment & \tbc{} & Manual cutting and placement of plies \\
+        Edge fraying / delamination & \tbc{} & Trimming of the cured skins \\
+        Warping of the skins & \tbc{} & Not expected for a symmetric lay-up \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\begin{addedblock}
+\subsection{Curing Temperature Profile}
+
+Both moulds were cured together in the oven under full vacuum, with
+the vacuum line connected throughout the cycle. The programmed cycle
+(Figure~\ref{fig:cure}) was a ramp from room temperature at
+\tbc{}\,$^\circ$C/min to \tbc{}\,$^\circ$C, a dwell of \tbc{}\,min,
+and cooling to below \tbc{}\,$^\circ$C before the vacuum was released
+\tbc{take these from the oven programme, the lab handout or the
+prepreg data sheet}. The ramp rate governs resin flow and bleed before
+gelation, the dwell sets the degree of cure and hence the
+glass-transition temperature, and cooling under vacuum keeps the
+laminate consolidated while residual stresses develop
+\citep{hexcel2013}. Because of the thermal mass of the aluminium
+moulds, the laminate lags the oven air temperature (dashed line), so
+its time at the cure temperature is shorter than programmed.
+\end{addedblock}
+
+\begin{figure}[htbp]
+    \addedfloat
+    \centering
+    \begin{minipage}[c]{0.52\linewidth}
+        \centering
+        \begin{tikzpicture}[font=\footnotesize, >=Stealth, black]
+            \draw[->] (0,0) -- (6.0,0) node[below left] {time};
+            \draw[->] (0,0) -- (0,2.5) node[above] {temperature};
+            % oven set-point
+            \draw[thick] (0,0.35) -- (1.5,1.9) -- (4.1,1.9) -- (5.4,0.5);
+            % laminate temperature (lagging), schematic
+            \draw[thick, dashed, gray] (0,0.35) .. controls (1.2,0.7) and (1.8,1.6) .. (2.4,1.85) -- (4.1,1.85) .. controls (4.6,1.4) and (5.2,0.8) .. (5.7,0.65);
+            \node[left] at (0,0.35) {$T_\mathrm{room}$};
+            \node[left] at (0,1.9) {$T_\mathrm{cure}$};
+            \draw[dotted] (0,1.9) -- (1.5,1.9);
+            \node[left] at (0.95,1.15) {ramp};
+            \draw[<->] (1.5,2.15) -- node[above] {dwell, $t_\mathrm{dwell}$} (4.1,2.15);
+            \node[right] at (4.85,1.25) {cool};
+            \draw[gray!70, line width=3pt] (0,-0.45) -- (5.4,-0.45);
+            \node[below] at (2.7,-0.5) {vacuum applied throughout};
+        \end{tikzpicture}\\[2pt]
+        {\footnotesize (a)}
+    \end{minipage}\hfill
+    \begin{minipage}[c]{0.46\linewidth}
+        \centering
+        \footnotesize
+        \renewcommand{\arraystretch}{1.2}
+        \begin{tabular}{@{}lll@{}}
+            \toprule
+            \textbf{Stage} & \textbf{Setting} & \textbf{Duration} \\
+            \midrule
+            Ramp & \tbc{}\,$^\circ$C/min to \tbc{}\,$^\circ$C & \tbc{}\,min \\
+            Dwell & \tbc{}\,$^\circ$C & \tbc{}\,min \\
+            Cool & to below \tbc{}\,$^\circ$C & \tbc{}\,min \\
+            Vacuum & full vacuum & whole cycle \\
+            \bottomrule
+        \end{tabular}\\[6pt]
+        {\footnotesize (b)}
+    \end{minipage}
+    \caption{Curing temperature profile: (a) schematic of the oven
+    set-point (solid) and the lagging laminate temperature (dashed);
+    (b) the programmed cycle.}
+    \label{fig:cure}
+\end{figure}
+
+\begin{addedblock}
+\subsection{Final Assembly and Bonding}
+
+After demoulding, the skins were trimmed along the mould edges and the
+peel ply was stripped to expose the textured bonding surface. The
+pre-shaped PU foam core was bonded between the skins with
+\tbc{adhesive, e.g.\ two-part epoxy}, applied to \tbc{the core / the
+inner skin surfaces}; the skins were aligned on the core using
+\tbc{alignment method, e.g.\ leading- and trailing-edge datums} and
+held with \tbc{tape / clamps / vacuum bag} while the adhesive cured
+\tbc{cure time and temperature}. Visually, the bond was \tbc{continuous
+/ had gaps at ...}, and at the leading and trailing edges
+\tbc{describe the fit: gaps, steps between the upper and lower skins,
+adhesive squeeze-out}. The adhesive bond line adds to the profile
+thickness, so the assembled aerofoil is slightly thicker than the
+nominal section defined by the core and two 0.786\,mm skins.
+\end{addedblock}
+
+\section{Discussion}
+
+\begin{addedblock}
+\subsection{Quality of the Manufactured Part}
+\label{sec:quality}
+
+\tbc{compare the measured thickness and $V_f$ with the nominal values
+in Table~\ref{tab:vf}.} A skin thicker than the nominal 0.786\,mm
+($V_f$ below 49\,\%) points to trapped air, resin-rich regions or
+incomplete consolidation, whereas a thinner skin indicates resin bleed
+into the peel ply and breather. Several features of this process
+favour some porosity: consolidation relied on vacuum alone (at most
+$\approx$1\,atm), the plies were not debulked individually
+\tbc{confirm}, and air trapped between plies of conventional prepreg
+can escape only through the laminate edges, whereas an autoclave adds
+several bar of pressure that collapses voids
+\citep{centea2015,hexcel2013}. Manual cutting and placement also cause
+ply misalignment of a few degrees, wrinkles where the fabric is forced
+around the tight leading-edge curvature, and bridging across concave
+regions of the moulds; together with the adhesive bond line, these
+explain differences between the measured and nominal profile. Quality
+could be improved by debulking under vacuum after each ply, cutting
+plies from templates with marked fibre directions, leak-testing the
+bag before cure, adding a low-temperature dwell to the cure cycle so
+that air can escape before the resin gels, and, for critical parts,
+curing in an autoclave \citep{hexcel2013,centea2015}.
+
+\subsection{Comparison of Manufacturing Methods}
+
+FRP manufacturing processes trade capital cost, labour and production
+rate against laminate quality (Table~\ref{tab:processes}). Open-mould
+processes (wet hand lay-up and spray-up) need the least investment but
+give low fibre fractions and high, operator-dependent void contents.
+Vacuum infusion and resin transfer moulding (RTM) make low-void,
+higher-$V_f$ parts from dry fabric: infusion needs only a single-sided
+tool and suits very large parts \citep{williams1996}, while the matched
+tools of RTM give two finished surfaces and shorter cycles for medium
+volumes. Prepreg processes give the most precise control of fibre
+content and orientation. Autoclave curing, including automated tape
+laying and fibre placement, gives the highest quality for aerospace
+primary structure, and the vacuum-bag/oven route used here achieves
+much of that quality at far lower capital cost, especially with
+prepregs formulated for out-of-autoclave cure \citep{centea2015}.
+Filament winding and pultrusion reach high $V_f$ and production rates
+but are limited to bodies of revolution and constant cross-sections,
+respectively \citep{campbell2004,astrom1997,mallick2007}.
+\end{addedblock}
+
+\begin{table}[htbp]
+    \addedfloat
+    \centering
+    \caption{Comparison of common FRP manufacturing processes.
+    $V_f$ values are indicative only and depend strongly on materials
+    and practice \citep{campbell2004,astrom1997,mallick2007,williams1996}.}
+    \label{tab:processes}
+    \footnotesize
+    \renewcommand{\arraystretch}{1.1}
+    \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.6cm}Lcc>{\raggedright\arraybackslash}p{1.7cm}>{\raggedright\arraybackslash}p{3.6cm}@{}}
+        \toprule
+        \textbf{Process} & \textbf{Principle} & $\boldsymbol{V_f}$ \textbf{(\%)}
+        & \textbf{Voids} & \textbf{Tooling / capital cost} & \textbf{Volume; typical applications} \\
+        \midrule
+        Wet hand lay-up & Resin worked into dry fabric by brush and roller
+            in an open mould & 20--40 & High & Low / low
+            & One-off to low; boat hulls, prototypes, repairs \\
+        Spray-up & Chopped roving and resin sprayed onto an open mould
+            & 15--30 & High & Low / low & Low--medium; baths, tanks,
+            non-structural panels \\
+        Prepreg, vacuum bag and oven (this lab) & Prepreg plies laid up,
+            vacuum bagged and oven cured & 50--60 & Low--mod.
+            & Medium / medium & Low--medium; UAVs, motorsport, sporting goods \\
+        Prepreg, autoclave (incl.\ ATL/AFP) & As above, cured under heat
+            and 3--7\,bar & 55--65 & Very low & High / very high
+            & Low--medium; aerospace primary structure \\
+        Vacuum infusion & Resin drawn through a dry preform under a bag
+            by vacuum & 50--60 & Low & Low / low & Low--medium; wind
+            blades, boat hulls \\
+        Resin transfer moulding & Resin injected into a dry preform in a
+            closed matched mould & 40--60 & Low & High / medium
+            & Medium--high; automotive and aerospace parts \\
+        Compression moulding (SMC) & Chopped-fibre charge pressed in
+            heated metal dies & 15--35 & Low & Very high / high
+            & High; automotive body panels \\
+        Filament winding & Resin-wetted tows wound onto a rotating mandrel
+            & 55--70 & Low & Medium / medium & Medium--high; pressure
+            vessels, pipes, shafts \\
+        Pultrusion & Fibres pulled through a resin bath and heated die
+            & 50--70 & Low & Medium / medium & Continuous; constant-section
+            profiles \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\begin{addedblock}
+\subsection{Parameters Influencing Composite Properties}
+
+\paragraph{Constituents.} Fibre type sets the ceiling on properties:
+T300-type carbon fibre ($E_f=230$\,GPa, $\rho_f=1.76$\,g\,cm$^{-3}$) is
+about 4.6 times stiffer per unit mass than E-glass ($E_f\approx72$\,GPa,
+$\rho_f=2.54$\,g\,cm$^{-3}$) \citep{toray_t300,mallick2007}, whereas
+glass is cheaper, has a higher strain to failure and is an electrical
+insulator. Hybridising them, as here, trades some stiffness for lower
+cost and better damage tolerance \citep{swolfs2014}. The matrix
+governs the matrix-dominated properties (transverse, shear,
+compressive and interlaminar strength), the maximum service
+temperature (through its glass-transition temperature) and
+environmental resistance, while the fibre--matrix interface controls
+load transfer \citep{mallick2007}.
+
+\paragraph{Fibre volume fraction.} Fibre-direction stiffness follows
+the rule of mixtures, $E_1 = V_f E_f + (1-V_f)E_m$
+\citep{mallick2007}, so each extra 1\,\% of carbon fibre raises the
+modulus of a unidirectional carbon/epoxy ply by about 2.3\,GPa. In
+practice $V_f$ is limited to about 60--70\,\% by fibre packing and
+wet-out, and it is set mainly by the consolidation pressure and resin
+bleed of the process (Table~\ref{tab:processes}).
+
+\paragraph{Fibre orientation and stacking sequence.} Properties are
+highest along the fibres and fall rapidly off-axis: Krenchel's
+orientation efficiency factor is 1 for unidirectional fibres, 0.5 for
+a 0/90$^\circ$ fabric loaded along one fibre direction and 0.375 for
+random in-plane mat \citep{krenchel1964}. Woven 0/90$^\circ$ plies
+therefore give balanced properties in two directions but low in-plane
+shear stiffness, so $\pm45^\circ$ plies are added where torsional
+stiffness is needed, as in wing skins. A symmetric lay-up removes
+bending--extension coupling, so the skins do not warp when the carbon
+and glass plies contract by different amounts on cooling from the cure
+temperature \citep{mallick2007}. Placing the stiffest plies furthest
+from the mid-plane maximises bending stiffness: a simple lamination
+estimate using the nominal ply thicknesses and effective ply moduli of
+about 60\,GPa (carbon) and 19\,GPa (glass) shows that the
+$[\mathrm{C}/\mathrm{G}]_\mathrm{s}$ skin has about 2.1 times the
+flexural rigidity of a $[\mathrm{G}/\mathrm{C}]_\mathrm{s}$ skin with
+the same materials and in-plane stiffness.
+
+\paragraph{Void content.} Voids act as stress concentrators and crack
+initiation sites and mainly degrade matrix-dominated properties:
+interlaminar shear strength falls by roughly 7\,\% for each 1\,\% of
+voids, up to about 4\,\% void content \citep{judd1978}. Voids come from
+air trapped during lay-up, moisture and volatiles, and insufficient
+consolidation pressure, which is why debulking, vacuum integrity and
+pressure are critical \citep{centea2015}.
+
+\paragraph{Processing conditions.} The cure cycle (heating rate, dwell
+temperature and time) controls resin viscosity and flow, the degree of
+cure and hence the glass-transition temperature, and the exotherm in
+thick sections, while prepreg that has exceeded its out-life loses
+tack and flow and becomes more porous \citep{hexcel2013}. The
+manufacturing method sets the achievable $V_f$, void content and fibre
+straightness (Table~\ref{tab:processes}), and manual operations add
+ply misalignment and wrinkles, so nominally identical laminates can
+differ noticeably.
+
+\subsection{Application of Hand Lay-up}
+
+Hand lay-up suits the wing skins of small fixed-wing unmanned aerial
+vehicles (UAVs) built in batches of a few to a few hundred by
+start-ups, research groups or student teams. Such volumes cannot
+justify the matched tooling of RTM or an autoclave, whereas hand
+lay-up needs only a single-sided mould (machined aluminium, tooling
+board or even 3D printed), a vacuum pump and an oven. Female moulds
+give the smooth, accurate outer surface needed for low drag, as this
+laboratory showed. Because every ply is placed by hand, the laminate
+can be tailored locally, with unidirectional carbon spar caps for
+bending, $\pm45^\circ$ plies for torsion and extra plies at attachment
+points, and glass can replace carbon around antennas because, unlike
+carbon, it does not block radio signals. Design changes need only a
+new mould or ply schedule, allowing rapid iteration, and the labour
+cost and operator-dependent quality are acceptable at these volumes,
+particularly when prepreg and vacuum bagging are used as here.
+\end{addedblock}
+
+\section{Conclusion}
+
+\begin{addedblock}
+An FRP aerofoil was made by hand lay-up of woven carbon and E-glass
+epoxy prepregs in aluminium billet moulds, vacuum bagging and oven
+curing, and the skins were bonded to a polyurethane foam core.
+\begin{itemize}[leftmargin=1.5em, itemsep=1pt, topsep=3pt]
+    \item Each skin is a symmetric four-ply hybrid
+    $[\mathrm{C}/\mathrm{G}]_\mathrm{s}$ laminate in which carbon is half
+    of the fibre mass but, being less dense (1.76 versus
+    2.54\,g\,cm$^{-3}$), about 59\,\% of the fibre volume.
+    \item The fibre volume fraction from the measured thickness was
+    \tbc{}\,\%, against about 49\,\% for a void-free laminate,
+    indicating \tbc{voids / resin bleed}. The mould-side surfaces
+    \tbc{summary}, and \tbc{main defects}.
+    \item Moulds must suit the process: aluminium is economical and
+    heats quickly, but expands almost ten times more than carbon/epoxy,
+    so Invar or composite tooling is preferred for large precision parts.
+    \item Fibre type, volume fraction, orientation, stacking sequence,
+    void content and cure govern laminate properties. Placing carbon
+    outermost roughly doubles the skin's flexural rigidity, and the
+    symmetric lay-up prevents warping.
+    \item Hand lay-up remains attractive for low-volume, high-value parts
+    such as UAV wing skins; ply-by-ply debulking or autoclave pressure
+    would further reduce porosity.
+\end{itemize}
+\end{addedblock}
+
+ \bibliographystyle{unsrtnat}
+\bibliography{references}
+
+    \section{Appendix}
+\tbc{the Appendix is currently empty. Delete this heading, or add raw
+measurement data here; note that appendix pages count towards the
+10-page limit.}
+
+    \end{document}
