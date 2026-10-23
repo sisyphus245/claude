@@ -162,59 +162,76 @@ temperature.
 \subsection{Material Composition}
 \label{sec:composition}
 
-The fibre densities are 1.76\,g\,cm$^{-3}$ for the T300-type carbon
-\citep{toray_t300} and 2.54\,g\,cm$^{-3}$ for E-glass
-\citep{mallick2007}, and the cured epoxy matrix is about
-1.2\,g\,cm$^{-3}$ \citep{mallick2007}. With equal nominal areal masses
-of 200\,g\,m$^{-2}$, carbon and glass each make up half of the plies
-and half of the fibre mass, but because carbon is about 30\,\% less
-dense it makes up about 59\,\% of the fibre volume (glass 41\,\%).
+The composition of each skin depends on the fibre densities of the
+carbon and glass, $\rho_\mathrm{C}$ and $\rho_\mathrm{G}$, the density
+of the cured epoxy matrix, $\rho_m$, and the fibre areal mass $A_w$ and
+resin mass fraction $W_r$ of each prepreg, all of which are given in
+the supplier data sheets. Since the cured skins were not measured, the
+composition is presented here as a theoretical framework rather than
+as numerical values.
 
-Since the cured skins were not measured, their composition was
-estimated theoretically. For a void-free laminate with no resin bleed,
-the cured thickness of each ply follows from its areal mass and
-prepreg resin content:
+For a void-free laminate with no resin bleed, the cured thickness of
+ply $i$ is the sum of the thicknesses of its solid fibre and its resin:
 \begin{equation}
     t_{\mathrm{ply},i} = \frac{A_{w,i}}{\rho_{f,i}}
-    + \frac{A_{w,i}}{\rho_m}\,\frac{W_{r,i}}{1-W_{r,i}},
+    + \frac{A_{w,i}}{\rho_m}\,\frac{W_{r,i}}{1-W_{r,i}}.
     \label{eq:cpt}
 \end{equation}
-where the first term is the thickness of solid fibre and the second
-that of resin. The fibre volume fraction of the laminate is then
+If the fibre volume fraction of each prepreg, $V_{f,i}$, is specified
+instead of its resin content, this becomes
+$t_{\mathrm{ply},i} = A_{w,i}/(\rho_{f,i}V_{f,i})$. For a skin made of
+$n_i$ plies of each prepreg, with thickness
+$h = \sum_i n_i t_{\mathrm{ply},i}$, the fibre volume fraction is
 \begin{equation}
-    V_f = \frac{1}{h}\sum_i \frac{n_i A_{w,i}}{\rho_{f,i}},
+    V_f = \frac{1}{h}\sum_i \frac{n_i A_{w,i}}{\rho_{f,i}}
     \label{eq:vf}
 \end{equation}
-where $n_i$ is the number of plies of fabric $i$ and $h$ the laminate
-thickness \citep{astm_d3171}. The results (Table~\ref{tab:vf}) give a
-skin thickness of 0.786\,mm and $V_f \approx 49$\,\%, made up of
-28.9\,\% carbon and 20.0\,\% glass fibre, with 51.1\,\% matrix by
-volume. These are ideal values: in the real skins, resin bleed into
-the peel ply and breather would raise $V_f$, while voids and
-incomplete consolidation under vacuum alone would lower it. Because
-the summed fibre thickness is 0.385\,mm, Eq.~(\ref{eq:vf}) reduces to
-$V_f = 0.385/h$ ($h$ in mm), so a single thickness measurement would
-be enough to check the estimate.
+\citep{astm_d3171}, and the remaining quantities follow from a mass
+balance (Table~\ref{tab:vf}). For the symmetric C/G/G/C skin
+($n_\mathrm{C} = n_\mathrm{G}$), if the two fabrics have equal areal
+masses then carbon and glass each provide half of the fibre mass, but
+the carbon share of the fibre volume is
+\begin{equation}
+    \frac{V_{f,\mathrm{C}}}{V_f} = \frac{\rho_\mathrm{G}}{\rho_\mathrm{C}+\rho_\mathrm{G}},
+    \label{eq:cshare}
+\end{equation}
+which exceeds one half because carbon fibre is less dense than glass
+fibre ($\rho_\mathrm{C} < \rho_\mathrm{G}$).
+
+These expressions give ideal values. In the real skins, resin bleed
+into the peel ply and breather would raise $V_f$, while voids and
+incomplete consolidation under vacuum alone would lower it. Measuring
+the cured thickness $h$ would allow $V_f$ to be checked directly from
+Eq.~(\ref{eq:vf}), and comparing a measured skin density
+$\rho_\mathrm{meas}$ with the void-free density $\rho_c$ in
+Table~\ref{tab:vf} would give an estimate of the void content,
+$V_v \approx 1 - \rho_\mathrm{meas}/\rho_c$ \citep{astm_d3171}.
 \end{addedblock}
 
 \begin{table}[htbp]
     \addedfloat
     \centering
-    \caption{Theoretical (void-free, no resin bleed) composition of
-    each skin, from Eqs.~(\ref{eq:cpt}) and (\ref{eq:vf}) with the
-    nominal values in Table~\ref{tab:architecture}.}
+    \caption{Expressions for the theoretical (void-free, no resin bleed)
+    composition of each skin; subscript $i$ denotes the prepreg type
+    (C = carbon, G = glass).}
     \label{tab:vf}
     \small
-    \renewcommand{\arraystretch}{1.1}
-    \begin{tabular}{@{}lccccc@{}}
+    \renewcommand{\arraystretch}{1.7}
+    \begin{tabular}{@{}ll@{}}
         \toprule
-        & \textbf{Thickness} & $\boldsymbol{V_f}$ & \textbf{Fibre mass} & \textbf{Density}
-        & \textbf{Areal mass} \\
-        & (mm) & (\%) & \textbf{fraction} (\%) & (g\,cm$^{-3}$) & (g\,m$^{-2}$) \\
+        \textbf{Quantity} & \textbf{Expression} \\
         \midrule
-        Carbon/epoxy ply & 0.225 & 50.6 & 60.0 & 1.48 & 333 \\
-        E-glass/epoxy ply & 0.168 & 46.7 & 65.0 & 1.83 & 308 \\
-        Skin $[\mathrm{C}/\mathrm{G}]_\mathrm{s}$ & 0.786 & 48.9 & 62.4 & 1.63 & 1282 \\
+        Cured ply thickness, $t_{\mathrm{ply},i}$ & Eq.~(\ref{eq:cpt}) \\
+        Fibre volume fraction of ply $i$, $V_{f,i}$ & $\dfrac{A_{w,i}}{\rho_{f,i}\,t_{\mathrm{ply},i}}$ \\
+        Skin thickness, $h$ & $\sum_i n_i\,t_{\mathrm{ply},i}$ \\
+        Fibre volume fraction of skin, $V_f$ & Eq.~(\ref{eq:vf}) \\
+        Carbon and glass fibre volume fractions, $V_{f,\mathrm{C}}$, $V_{f,\mathrm{G}}$
+            & $\dfrac{n_\mathrm{C}A_{w,\mathrm{C}}}{\rho_\mathrm{C}\,h}$,\quad
+              $\dfrac{n_\mathrm{G}A_{w,\mathrm{G}}}{\rho_\mathrm{G}\,h}$ \\
+        Matrix volume fraction (void-free), $V_m$ & $1 - V_f$ \\
+        Areal mass of skin, $m_A$ & $\sum_i \dfrac{n_i A_{w,i}}{1-W_{r,i}}$ \\
+        Fibre mass fraction of skin, $W_f$ & $\dfrac{1}{m_A}\sum_i n_i A_{w,i}$ \\
+        Density of skin (void-free), $\rho_c$ & $m_A / h$ \\
         \bottomrule
     \end{tabular}
 \end{table}
